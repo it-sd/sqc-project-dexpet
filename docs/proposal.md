@@ -22,6 +22,6 @@ This is going to be updated by our Seasons Import page using Sport Data API, thi
 
 <h2>Initial Designs</h2>
 
-[Site master Page](/layout.png)
+![Site master Page](/layout.png)
 
-[Site Map](/sitemap.png)
+![Site Map](/sitemap.png)
