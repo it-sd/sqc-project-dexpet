@@ -24,4 +24,4 @@ This is going to be updated by our Seasons Import page using Sport Data API, thi
 
 [Site master Page](/layout.png)
 
-[Site Map](/site%20map.png)
+[Site Map](/sitemap.png)
