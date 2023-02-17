@@ -26,3 +26,4 @@ This is going to be updated by our Seasons Import page using Sport Data API, thi
 
 ![Site Map](https://github.com/it-sd/sqc-project-dexpet/blob/main/docs/sitemap.png)
 
+4. Hello from hmaves1!
