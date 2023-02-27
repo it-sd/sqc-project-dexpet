@@ -1,6 +1,7 @@
 require('dotenv').config() // Read environment variables from .env
 const express = require('express')
 const path = require('path')
+const app = express()
 const PORT = process.env.PORT || 5163
 
 const { Pool } = require('pg')
@@ -34,34 +35,33 @@ const queryAllGames = async function() {
   return { games: results}
 }
 
-express()
-  .use(express.static(path.join(__dirname, 'public')))
-  .use(express.json())
-  .use(express.urlencoded({ extended: true }))
-  .set('views', path.join(__dirname, 'views'))
-  .set('view engine', 'ejs')
-  .get('/', async function (req, res) {
-    res.render('pages/index')
-  })
-  .get('/about', function (req, res) {
-    res.render('pages/about')
-  })
-  .get('/calculator', function (req, res) {
-    res.render('pages/calculator')
-  })
-  .get('/health', async function (req, res) {
-    const games = await queryAllGames
-    if (games != null) {
-      res.status(200).send('Healthy')
-    } else {
-      res.status(500).send('Database connection has failed')
-    }
-  })
-
-  // end of implementation ///////////////////////////////////
-  .listen(PORT, () => console.log(`Listening on ${PORT}`))
-
-  module.exports = {
-    query,
-    queryAllGames
+app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.set('views', path.join(__dirname, 'views'))
+app.set('view engine', 'ejs')
+app.get('/', async function (req, res) {
+  res.render('pages/index')
+})
+app.get('/about', function (req, res) {
+  res.render('pages/about')
+})
+app.get('/calculator', function (req, res) {
+  res.render('pages/calculator')
+})
+app.get('/health', async function (req, res) {
+  const games = await queryAllGames
+  if (games != null) {
+    res.status(200).send('Healthy')
+  } else {
+    res.status(500).send('Database connection has failed')
   }
+})
+
+// end of implementation ///////////////////////////////////
+app.listen(PORT, () => console.log(`Listening on ${PORT}`))
+
+module.exports = {
+  query,
+  queryAllGames
+}
