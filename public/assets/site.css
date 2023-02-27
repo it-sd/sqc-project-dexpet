@@ -1,0 +1,56 @@
+body {
+  background-color: #041E42;
+  font-family: Verdana, Arial, Sans-serif;
+}
+
+.wrapper {
+  margin: 0 auto;
+  position: relative;
+  width: 85%;
+  height: 600px;
+  background-color: #C8102E;
+
+}
+
+header {
+  background: #FFFF;
+}
+
+h1 {
+  font-family: Georgia;
+  height: 50px;
+  margin: 15px auto;
+  text-indent: 30%;
+
+}
+
+main {
+  height: 80%;
+}
+
+.input {
+  display: block;
+  background-color: #ffff;
+  margin-left: 30px;
+  margin-right: 30px;
+  margin-top: 15px;
+}
+
+.input > p {
+  position:relative;
+  display: inline;
+  font-family: Georgia;
+
+}
+
+input[type="button"] {
+  margin-left: 5.3rem;
+}
+
+#txtGoals, #txtGames {
+  margin-left: 8.3rem;
+}
+
+section {
+  text-align: center;
+}
