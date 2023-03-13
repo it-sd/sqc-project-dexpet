@@ -1,24 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Colors</title>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <!-- TODO: Link to the stylesheet -->
-  <link href="/public/site.css" type="css" rel="stylesheet" crossorigin="anonymous">
+<%- include('partials/header.ejs') %>
 </head>
-<body id="body">
-  <main>
-    <body id="body">
-      <main>
-        <h1>This is the Index Page</h1>
-      </main>
-      <script>
-    
-      </script>
-    </body>
-    </html>
+
+<!-- First Grid -->
+<div class="w3-row-padding w3-padding-64 w3-container">
+  <div class="w3-content">
+    <div class="w3-twothird">
+      <h1>Project Record Chaser</h1>
+      <h5 class="w3-padding-32">Lets count down the goals on Ovechkin's journey to the goal scoring title.</h5>
+
+      <p class="w3-text-grey">The goal is to get the website to be writing goals to the database as they are scored and updating the counter to reflect them.</p>
+    </div>
+
+    <div class="w3-third w3-center">
+      <i class="fa fa-anchor w3-padding-64 w3-text-red"></i>
+    </div>
+  </div>
+</div>
+
+<!-- Second Grid -->
+<div class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
+  <div class="w3-content">
+    <div class="w3-third w3-center">
+      <i class="fa fa-coffee w3-padding-64 w3-text-red w3-margin-right"></i>
+    </div>
+
+    <div class="w3-twothird">
+      <h1>So want to browse the DBs? Feel free to do so here!</h1>
+      <h5 class="w3-padding-32">Words words words</h5>
+
+      <p class="w3-text-grey">Another area for us to put information into if we need to.</p>
+    </div>
+  </div>
+</div>
+
+<div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
+    <h1 class="w3-margin w3-xlarge">Quote of the day: Russian Machine Never Break</h1>
+</div>
+
+</html>
