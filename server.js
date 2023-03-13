@@ -66,6 +66,27 @@ app.get('/health', async function (req, res) {
     res.status(500).send('Database connection has failed')
   }
 })
+app.post('/insertGame', (req, res) => {
+  // get information from req body
+  const result = req.body.result
+  const date = req.body.date
+  const opponent = req.body.opponent
+  const opponentGoals = req.body.opponentGoals
+  const home = req.body.home
+  const capsGoals = req.body.capsGoals
+  const ovGoals = req.body.ovGoals
+
+  // Insert into database
+  const insertQuery = `INSERT INTO games (result, date, opponent, opponentGoals, home, capsGoals, ovGoals) VALUES ('${capsGoals > opponentGoals ? 'W' : 'L'}, ${date}, '${opponent}', ${opponentGoals}, '${home}', ${capsGoals}, ${ovGoals})`
+  pool.query(insertQuery)
+  if (err) {
+  console.error(err.message)
+  res.status(500).send('Error upon inserting game into database.')
+  } else {
+    console.log(`Game added to the database with ID ${this.lastID}`)
+    res.send(`Game added to the database with ID ${this.lastID}`)
+  }
+})
 
 // end of implementation ///////////////////////////////////
 app.listen(PORT, () => console.log(`Listening on ${PORT}`))
