@@ -4,7 +4,7 @@ const path = require('path')
 const app = express()
 const corsProxy = require('cors-anywhere')
 const PORT = process.env.PORT || 5163
-const pPORT = process.env.PORT || 5162
+const pPORT = process.env.PORT || 8080
 
 const { Pool } = require('pg')
 
