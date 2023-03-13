@@ -3,6 +3,7 @@ const express = require('express')
 const path = require('path')
 const app = express()
 const PORT = process.env.PORT || 5163
+const TOKEN = process.env.TOKEN
 
 const { Pool } = require('pg')
 
@@ -85,7 +86,6 @@ app.get('/health', async function (req, res) {
   }
 })
 
-
 app.post('/insertGame', (req, res) => {
   // get information from req body
   const date = req.body.date
@@ -104,6 +104,41 @@ app.post('/insertGame', (req, res) => {
   } else {
     console.log(`Game added to the database with ID ${this.lastID}`)
     res.send(`Game added to the database with ID ${this.lastID}`)
+  }
+})
+
+app.get('/get-schedule', async (req, res) => {
+  try {
+    const seasonID = '5d08ca09-ec49-4559-9c0f-257c0158e57f'
+    const response = await fetch(`https://api.sportradar.us/nhl/trial/v7/en/games/${seasonID}/schedule.json?api_key=${TOKEN}`)
+    const data = await response.json()
+
+    // Loop through the data and pull out all Wash Caps gameIDs to store in DB.
+    const games = data.games.filter(game => {
+      return game.home.name === 'Washington Capitals' || game.away.name === 'Washington Capitals';
+    }).map(game => {
+      return {
+        gameId: game.id,
+        seasonId: game.season.id,
+        homeTeam: game.home.name,
+        awayTeam: game.away.name,
+        homeTeamGoals: 0,
+        awayTeamGoals: 0
+      }
+    })
+
+    // Insert the game information into the database
+    const client = await pool.connect()
+    const query = 'INSERT INTO games (game_id, season_id, home_team, away_team, home_team_goals, away_team_goals) VALUES ($1, $2, $3, $4, $5, $6)'
+    games.forEach(game => {
+      client.query(query, [game.gameId, game.seasonId, game.homeTeam, game.awayTeam, game.homeTeamGoals, game.awayTeamGoals])
+    })
+    client.release()
+
+    res.json(games)
+  } catch (error) {
+    console.error(error)
+    res.status(500).send('An error occurred while fetching the schedule.')
   }
 })
 
