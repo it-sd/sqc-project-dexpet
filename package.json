@@ -1,0 +1,40 @@
+{
+  "name": "sqc-project-dexpet",
+  "version": "1.0.0",
+  "description": "<h1> Ove Goal Calc</h1>\r <h2>dpeterson201</h2>\r For this project, I would like to create a main page that links to the goal calc. The goal calc will ask if it has the most recent game, then when prompted, it will output if/when Ovechkin is on pace\r to break the goal scoring record. This is going to be a pretty simple calculation, but I do think it would be fun to add what ifs, such as \"check this box to see what it would look like if player lockout didn't happen\" and similar for COVID shortened season.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint \"**/*.js\"",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/it-sd/sqc-project-dexpet.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/it-sd/sqc-project-dexpet/issues"
+  },
+  "homepage": "https://github.com/it-sd/sqc-project-dexpet#readme",
+  "devDependencies": {
+    "eslint": "^8.33.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-n": "^15.6.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "jasmine": "^4.5.0",
+    "nyc": "^15.1.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "ejs": "^3.1.8",
+    "express": "^4.18.2",
+    "pg": "^8.9.0"
+  }
+}

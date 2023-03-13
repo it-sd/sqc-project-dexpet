@@ -1,5 +1,5 @@
 <h1> Ove Goal Calc</h1>
-<h2>dpeterson201</h2>
+
 For this project, I would like to create a main page that links to the goal calc. The goal calc will ask if it has the most recent game, then when prompted, it will output if/when Ovechkin is on pace
 to break the goal scoring record. This is going to be a pretty simple calculation, but I do think it would be fun to add what ifs, such as "check this box to see what it would look like if player lockout didn't happen" and similar for COVID shortened season. 
 
@@ -25,7 +25,3 @@ This is going to be updated by our Seasons Import page using Sport Data API, thi
 ![Site master Page](https://github.com/it-sd/sqc-project-dexpet/blob/main/docs/layout.png)
 
 ![Site Map](https://github.com/it-sd/sqc-project-dexpet/blob/main/docs/sitemap.png)
-
-
-4. Hello from iwinegarden!
-4. iwinegarden can handle rejection
