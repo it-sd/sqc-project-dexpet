@@ -1,4 +1,4 @@
-require('dotenv').config() // Read environment variables from .env
+require('dotenv').config()
 const express = require('express')
 const path = require('path')
 const app = express()
@@ -29,10 +29,15 @@ const query = async function (sql, params) {
 }
 
 const queryAllGames = async function() {
-  const sql = 'SELECT * FROM games'
+  const sql = 'SELECT * FROM games ORDER BY date;'
 
   const results = await query(sql)
   return { games: results}
+}
+
+module.exports = {
+  query,
+  queryAllGames
 }
 
 app.use(express.static(path.join(__dirname, 'public')))
@@ -41,7 +46,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
-app.get('/', async function (req, res) {
+app.get('/', function (req, res) {
   res.render('pages/index')
 })
 app.get('/about', function (req, res) {
@@ -50,10 +55,13 @@ app.get('/about', function (req, res) {
 app.get('/calculator', function (req, res) {
   res.render('pages/calculator')
 })
+app.get('/import', function (req, res) {
+  res.render('pages/import')
+})
 app.get('/health', async function (req, res) {
   const games = await queryAllGames
   if (games != null) {
-    res.status(200).send('Healthy')
+    res.status(200).send('healthy')
   } else {
     res.status(500).send('Database connection has failed')
   }
@@ -61,8 +69,3 @@ app.get('/health', async function (req, res) {
 
 // end of implementation ///////////////////////////////////
 app.listen(PORT, () => console.log(`Listening on ${PORT}`))
-
-module.exports = {
-  query,
-  queryAllGames
-}
