@@ -48,7 +48,7 @@ function getNHLInfo() {
   const day = date.getDate();
 
   // Fetch NHL daily schedule
-  fetch(`https://project-record-chaser.onrender/com/import/https://api.sportradar.us/nhl/trial/v7/en/games/${year}/${month}/${day}/schedule.json?api_key=${TOKEN}`)
+  fetch(`http://localhost:5162/https://api.sportradar.us/nhl/trial/v7/en/games/2023/03/06/schedule.json?api_key=${TOKEN}`)
     .then(response => response.json())
     .then(data => {
 
@@ -64,7 +64,7 @@ function getNHLInfo() {
 
       if (gameID !== null) {
         // Fetch for game info using gameID
-        fetch(`https://api.sportradar.us/nhl/trial/v7/en/games/${gameID}/summary.json?api_key=${TOKEN}`)
+        fetch(`http://localhost:5162/https://api.sportradar.us/nhl/trial/v7/en/games/${gameID}/summary.json?api_key=${TOKEN}`)
           .then(response => response.json())
           .then(data => {
 
@@ -137,7 +137,7 @@ function getCapitals2022Games() {
   const day = date.getDate();
 
   // Fetch NHL daily schedule
-  fetch(`https://api.sportradar.us/nhl/trial/v7/en/games/${year}/${month}/${day}/schedule.json?api_key=${TOKEN}`)
+  fetch(`http://localhost:5162/https://api.sportradar.us/nhl/trial/v7/en/games/${year}/${month}/${day}/schedule.json?api_key=${TOKEN}`)
     .then(response => response.json())
     .then(data => {
 
@@ -153,7 +153,7 @@ function getCapitals2022Games() {
 
       if (gameID !== null) {
         // Fetch for game info using gameID
-        fetch(`https://api.sportradar.us/nhl/trial/v7/en/games/${gameID}/summary.json?api_key=${TOKEN}`)
+        fetch(`http://localhost:5162/https://api.sportradar.us/nhl/trial/v7/en/games/${gameID}/summary.json?api_key=${TOKEN}`)
           .then(response => response.json())
           .then(data => {
 
