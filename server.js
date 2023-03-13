@@ -29,10 +29,28 @@ const query = async function (sql, params) {
 }
 
 const queryAllGames = async function() {
-  const sql = 'SELECT * FROM games ORDER BY date;'
+  const sql = `SELECT * FROM games ORDER BY date;`
 
   const results = await query(sql)
   return { games: results}
+}
+
+const queryAllGoals = async function() {
+  const sql = `Select count(ovGoals) FROM games;`
+
+  const results = await query(sql)
+  return {games: results}
+}
+
+const queryLatestGoal = async function() {
+  const sql = `Select gameID FROM games WHERE ovGoals > 0 ORDER BY date`
+
+  const gameID = await query(sql)
+
+  const sql2 = `Select * FROM games WHERE gameID = ${gameID};`
+
+  const results = await query(sql2)
+  return {games: results}
 }
 
 module.exports = {
