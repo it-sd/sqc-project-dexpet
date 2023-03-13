@@ -41,14 +41,14 @@
 <script>
   // Function to handle button click event
 function getNHLInfo() {
-  const apiKey = 'TOKEN';
+  const TOKEN = process.env.TOKEN;
   const date = new Date();
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();
 
   // Fetch NHL daily schedule
-  fetch(`https://api.sportradar.us/nhl/trial/v7/en/games/${year}/${month}/${day}/schedule.json?api_key=${apiKey}`)
+  fetch(`https://api.sportradar.us/nhl/trial/v7/en/games/${year}/${month}/${day}/schedule.json?api_key=${TOKEN}`)
     .then(response => response.json())
     .then(data => {
 
@@ -64,7 +64,7 @@ function getNHLInfo() {
 
       if (gameID !== null) {
         // Fetch for game info using gameID
-        fetch(`https://api.sportradar.us/nhl/trial/v7/en/games/${gameID}/summary.json?api_key=${apiKey}`)
+        fetch(`https://api.sportradar.us/nhl/trial/v7/en/games/${gameID}/summary.json?api_key=${TOKEN}`)
           .then(response => response.json())
           .then(data => {
 
