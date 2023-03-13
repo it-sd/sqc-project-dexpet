@@ -2,9 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const path = require('path')
 const app = express()
-const corsProxy = require('cors-anywhere')
 const PORT = process.env.PORT || 5163
-const pPORT = process.env.PORT || 8080
 
 const { Pool } = require('pg')
 
@@ -13,14 +11,6 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: false
   }
-})
-
-corsProxy.createServer({
-  originWhitelist: [], // Allow all origins
-  requireHeader: ['origin', 'x-requested-with'],
-  removeHeaders: ['cookie', 'cookie2']
-}).listen(pPORT, () => {
-  console.log(`CORS Anywhere proxy server running on port ${pPORT}`)
 })
 
 const query = async function (sql, params) {
@@ -94,6 +84,8 @@ app.get('/health', async function (req, res) {
     res.status(500).send('Database connection has failed')
   }
 })
+
+
 app.post('/insertGame', (req, res) => {
   // get information from req body
   const date = req.body.date

@@ -48,7 +48,7 @@ function getNHLInfo() {
   const day = date.getDate();
 
   // Fetch NHL daily schedule
-  fetch(`http://localhost:8080/https://api.sportradar.us/nhl/trial/v7/en/games/2023/03/06/schedule.json?api_key=${TOKEN}`)
+  fetch(`http://localhost:5163/https://api.sportradar.us/nhl/trial/v7/en/games/2023/03/06/schedule.json?api_key=${TOKEN}`)
     .then(response => response.json())
     .then(data => {
 
@@ -64,7 +64,7 @@ function getNHLInfo() {
 
       if (gameID !== null) {
         // Fetch for game info using gameID
-        fetch(`http://localhost:8080/https://api.sportradar.us/nhl/trial/v7/en/games/${gameID}/summary.json?api_key=${TOKEN}`)
+        fetch(`http://localhost:5163/https://api.sportradar.us/nhl/trial/v7/en/games/${gameID}/summary.json?api_key=${TOKEN}`)
           .then(response => response.json())
           .then(data => {
 
