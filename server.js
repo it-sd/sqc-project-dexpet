@@ -2,7 +2,9 @@ require('dotenv').config()
 const express = require('express')
 const path = require('path')
 const app = express()
+const corsProxy = require('cors-anywhere')
 const PORT = process.env.PORT || 5163
+const pPORT = process.env.PORT || 5162
 
 const { Pool } = require('pg')
 
@@ -13,8 +15,16 @@ const pool = new Pool({
   }
 })
 
+corsProxy.createServer({
+  originWhitelist: [], // Allow all origins
+  requireHeader: ['origin', 'x-requested-with'],
+  removeHeaders: ['cookie', 'cookie2']
+}).listen(pPORT, () => {
+  console.log(`CORS Anywhere proxy server running on port ${pPORT}`)
+})
+
 const query = async function (sql, params) {
-  let client 
+  let client
   let results = []
   try {
     client = await pool.connect()
@@ -28,29 +38,29 @@ const query = async function (sql, params) {
   return results
 }
 
-const queryAllGames = async function() {
-  const sql = `SELECT * FROM games ORDER BY date;`
+const queryAllGames = async function () {
+  const sql = 'SELECT * FROM games ORDER BY date;'
 
   const results = await query(sql)
-  return { games: results}
+  return { games: results }
 }
 
-const queryAllGoals = async function() {
-  const sql = `Select count(ovGoals) FROM games;`
+const queryAllGoals = async function () {
+  const sql = 'Select count(ovGoals) FROM games;'
 
   const results = await query(sql)
-  return {games: results}
+  return { games: results }
 }
 
-const queryLatestGoal = async function() {
-  const sql = `Select gameID FROM games WHERE ovGoals > 0 ORDER BY date`
+const queryLatestGoal = async function () {
+  const sql = 'Select gameID FROM games WHERE ovGoals > 0 ORDER BY date'
 
   const gameID = await query(sql)
 
   const sql2 = `Select * FROM games WHERE gameID = ${gameID};`
 
   const results = await query(sql2)
-  return {games: results}
+  return { games: results}
 }
 
 module.exports = {
@@ -86,7 +96,6 @@ app.get('/health', async function (req, res) {
 })
 app.post('/insertGame', (req, res) => {
   // get information from req body
-  const result = req.body.result
   const date = req.body.date
   const opponent = req.body.opponent
   const opponentGoals = req.body.opponentGoals
@@ -98,8 +107,8 @@ app.post('/insertGame', (req, res) => {
   const insertQuery = `INSERT INTO games (result, date, opponent, opponentGoals, home, capsGoals, ovGoals) VALUES ('${capsGoals > opponentGoals ? 'W' : 'L'}, ${date}, '${opponent}', ${opponentGoals}, '${home}', ${capsGoals}, ${ovGoals})`
   pool.query(insertQuery)
   if (err) {
-  console.error(err.message)
-  res.status(500).send('Error upon inserting game into database.')
+    console.error(err.message)
+    res.status(500).send('Error upon inserting game into database.')
   } else {
     console.log(`Game added to the database with ID ${this.lastID}`)
     res.send(`Game added to the database with ID ${this.lastID}`)
