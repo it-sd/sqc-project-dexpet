@@ -4,7 +4,7 @@ const path = require('path')
 const app = express()
 const PORT = process.env.PORT || 5163
 const TOKEN = process.env.TOKEN
-const fetch = require('node-fetch')
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args))
 
 const { Pool } = require('pg')
 
@@ -110,7 +110,6 @@ app.post('/insertGame', (req, res) => {
 
 app.get('/get-schedule', async (req, res) => {
   try {
-    //const seasonID = '5d08ca09-ec49-4559-9c0f-257c0158e57f'
     const response = await fetch(`http://api.sportradar.us/nhl/trial/v7/en/games/2022/REG/schedule.json?api_key=${TOKEN}`)
     const data = await response.json()
 
@@ -118,21 +117,39 @@ app.get('/get-schedule', async (req, res) => {
     const games = data.games.filter(game => {
       return game.home.name === 'Washington Capitals' || game.away.name === 'Washington Capitals'
     }).map(game => {
+      const gameID = game.reference
+      let result = 'U'
+      let capsGoals = 0
+      let oppGoals = 0
+      const date = game.scheduled
+      const home = game.home.alias.includes('WSH') ? 'Y' : 'N'
+      const opponent = game.home.alias.includes('WSH') ? game.away.name : game.home.name
+      if (game.away_points && game.away.alias.includes('WSH')) {
+        capsGoals = game.away_points
+        oppGoals = game.home_points
+        result = (capsGoals > oppGoals) ? 'Y' : 'N'
+      } else if (game.home_points && game.home.alias.includes('WSH')) {
+        capsGoals = game.home_points
+        oppGoals = game.away_points
+        result = (capsGoals > oppGoals) ? 'Y' : 'N'
+      }
       return {
-        gameId: game.id,
-        seasonId: game.season.id,
-        homeTeam: game.home.name,
-        awayTeam: game.away.name,
-        homeTeamGoals: 0,
-        awayTeamGoals: 0
+        gameID: gameID,
+        seasonID: 2022,
+        result: result,
+        date: date,
+        opponent: opponent,
+        oppGoals: oppGoals,
+        capsGoals: capsGoals,
+        home: home
       }
     })
 
     // Insert the game information into the database
     const client = await pool.connect()
-    const query = 'INSERT INTO games (game_id, season_id, home_team, away_team, home_team_goals, away_team_goals) VALUES ($1, $2, $3, $4, $5, $6)'
+    const query = 'INSERT INTO games (gameID, seasonID, result, date, opponent, opponentGoals, home, capsGoals) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)'
     games.forEach(game => {
-      client.query(query, [game.gameId, game.seasonId, game.homeTeam, game.awayTeam, game.homeTeamGoals, game.awayTeamGoals])
+      client.query(query, [game.gameID, game.seasonID, game.result, game.date, game.opponent, game.opponentGoals, game.capsGoals, game.home])
     })
     client.release()
 
