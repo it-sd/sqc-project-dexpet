@@ -52,12 +52,14 @@ const queryLatestGoal = async function () {
   const sql2 = `Select * FROM games WHERE gameID = ${gameID};`
 
   const results = await query(sql2)
-  return { games: results}
+  return { games: results }
 }
 
 module.exports = {
   query,
-  queryAllGames
+  queryAllGames,
+  queryLatestGoal,
+  queryAllGoals
 }
 
 app.use(express.static(path.join(__dirname, 'public')))
@@ -108,6 +110,8 @@ app.post('/insertGame', (req, res) => {
   }
 })
 
+app.get('/update-db')
+
 app.get('/get-schedule', async (req, res) => {
   try {
     const response = await fetch(`http://api.sportradar.us/nhl/trial/v7/en/games/2022/REG/schedule.json?api_key=${TOKEN}`)
@@ -147,7 +151,7 @@ app.get('/get-schedule', async (req, res) => {
 
     // Insert the game information into the database
     const client = await pool.connect()
-    const query = 'INSERT INTO games (gameID, seasonID, result, date, opponent, opponentGoals, home, capsGoals) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)'
+    const query = 'INSERT INTO games (seasonID, result, date, opponent, opponentGoals, home, capsGoals) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)'
     games.forEach(game => {
       client.query(query, [game.gameID, game.seasonID, game.result, game.date, game.opponent, game.opponentGoals, game.capsGoals, game.home])
     })

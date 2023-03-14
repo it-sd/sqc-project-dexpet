@@ -17,6 +17,7 @@ INSERT INTO season(result, capsWins, capsLosses, overtimeLoss, year, points)
 CREATE TABLE games (
   gameID INT GENERATED ALWAYS AS IDENTITY,
   seasonID INT,
+  referenceID VarChar(100),
   result VarChar(1),
   date date,
   opponent VarChar(35),
