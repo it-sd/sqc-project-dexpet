@@ -4,6 +4,7 @@ const path = require('path')
 const app = express()
 const PORT = process.env.PORT || 5163
 const TOKEN = process.env.TOKEN
+const fetch = require('node-fetch')
 
 const { Pool } = require('pg')
 
