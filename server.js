@@ -109,13 +109,13 @@ app.post('/insertGame', (req, res) => {
 
 app.get('/get-schedule', async (req, res) => {
   try {
-    const seasonID = '5d08ca09-ec49-4559-9c0f-257c0158e57f'
-    const response = await fetch(`https://api.sportradar.us/nhl/trial/v7/en/games/${seasonID}/schedule.json?api_key=${TOKEN}`)
+    //const seasonID = '5d08ca09-ec49-4559-9c0f-257c0158e57f'
+    const response = await fetch(`http://api.sportradar.us/nhl/trial/v7/en/games/2022/REG/schedule.json?api_key=${TOKEN}`)
     const data = await response.json()
 
     // Loop through the data and pull out all Wash Caps gameIDs to store in DB.
     const games = data.games.filter(game => {
-      return game.home.name === 'Washington Capitals' || game.away.name === 'Washington Capitals';
+      return game.home.name === 'Washington Capitals' || game.away.name === 'Washington Capitals'
     }).map(game => {
       return {
         gameId: game.id,
