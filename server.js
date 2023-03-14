@@ -151,9 +151,9 @@ app.get('/get-schedule', async (req, res) => {
 
     // Insert the game information into the database
     const client = await pool.connect()
-    const query = 'INSERT INTO games (seasonID, result, date, opponent, opponentGoals, home, capsGoals) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)'
+    const query = 'INSERT INTO games (seasonID, referenceID result, date, opponent, opponentGoals, home, capsGoals) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)'
     games.forEach(game => {
-      client.query(query, [game.gameID, game.seasonID, game.result, game.date, game.opponent, game.opponentGoals, game.capsGoals, game.home])
+      client.query(query, [game.seasonID, game.gameID, game.result, game.date, game.opponent, game.opponentGoals, game.capsGoals, game.home])
     })
     client.release()
 
