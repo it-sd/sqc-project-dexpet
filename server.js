@@ -145,6 +145,89 @@ app.get('/get-goals', async (req, res) => {
   }
 })
 
+app.get('/get-goals-test1', async (req, res) => {
+  try {
+    const client = await pool.connect()
+    const gameID = 'ca5461fa-29e8-47d9-8c8b-136563c60de7'
+    const response = await fetch(`http://api.sportradar.us/nhl/trial/v7/en/games/${gameID}/boxscore.json?api_key=${TOKEN}`)
+    const gameData = await response.json()
+    if (gameData.status !== 'closed') {
+      return res.status(500).send('There is a game scheduled, but it has not finished.')
+    }
+    let ovGoals = 0
+    const capsGoals = gameData.home.name.includes('Capitals') ? gameData.home.points : gameData.away.points
+    gameData.home.leaders.goals.forEach(goal => {
+      if (goal.full_name.includes('Alex Ovechkin')) {
+        ovGoals = goal.statistics.total.goals
+      }
+    })
+    gameData.away.leaders.goals.forEach(goal => {
+      if (goal.full_name.includes('Alex Ovechkin')) {
+        ovGoals = goal.statistics.total.goals
+      }
+    })
+    const opponentGoals = gameData.home.name.includes('Capitals') ? gameData.away.points : gameData.home.points
+    const gameResult = (capsGoals > opponentGoals) ? 'Y' : 'N'
+    const updateQuery = `Update games SET capsgoals = ${capsGoals}, result=\'${gameResult}\', opponentgoals=${opponentGoals}, ovgoals=${ovGoals} WHERE referenceID=\'${gameID}\';`
+
+    const returnData = {
+      capsgoals: capsGoals,
+      ovgoals: ovGoals,
+      opponentgoals: opponentGoals,
+      result: gameResult
+    }
+
+    client.query(updateQuery)
+    client.release()
+
+    res.json(returnData)
+  } catch (error) {
+    console.error(error)
+    res.status(500).send('An error occurred while looking for the most recent goal.')
+  }
+})
+
+app.get('/get-goals-test2', async (req, res) => {
+  try {
+    const gameID = '5173d074-b707-480d-b422-31a48992a0f4'
+    const response = await fetch(`http://api.sportradar.us/nhl/trial/v7/en/games/${gameID}/boxscore.json?api_key=${TOKEN}`)
+    const gameData = await response.json()
+    if (gameData.status !== 'closed') {
+      return res.status(500).send('There is a game scheduled, but it has not finished.')
+    }
+    let ovGoals = 0
+    const capsGoals = gameData.home.name.includes('Capitals') ? gameData.home.points : gameData.away.points
+    gameData.home.leaders.goals.forEach(goal => {
+      if (goal.full_name.includes('Alex Ovechkin')) {
+        ovGoals = goal.statistics.total.goals
+      }
+    })
+    gameData.away.leaders.goals.forEach(goal => {
+      if (goal.full_name.includes('Alex Ovechkin')) {
+        ovGoals = goal.statistics.total.goals
+      }
+    })
+    const opponentGoals = gameData.home.name.includes('Capitals') ? gameData.away.points : gameData.home.points
+    const gameResult = (capsGoals > opponentGoals) ? 'Y' : 'N'
+    const updateQuery = `Update games SET capsgoals = ${capsGoals}, result=\'${gameResult}\', opponentgoals=${opponentGoals}, ovgoals=${ovGoals} WHERE referenceID=\'${gameID}\';`
+
+    const returnData = {
+      capsgoals: capsGoals,
+      ovgoals: ovGoals,
+      opponentgoals: opponentGoals,
+      result: gameResult
+    }
+
+    client.query(updateQuery)
+    client.release()
+
+    res.json(returnData)
+  } catch (error) {
+    console.error(error)
+    res.status(500).send('An error occurred while looking for the most recent goal.')
+  }
+})
+
 app.get('/get-schedule', async (req, res) => {
   try {
     const response = await fetch(`http://api.sportradar.us/nhl/trial/v7/en/games/2022/REG/schedule.json?api_key=${TOKEN}`)
