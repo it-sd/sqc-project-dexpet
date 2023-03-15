@@ -7,11 +7,12 @@
 <div class="w3-row-padding w3-padding-64 w3-container">
   <div class="w3-content">
     <div class="w3-twothird">
-      <h1>Game Import</h1>
+      <h1>Import</h1>
       <h5 class="w3-padding-32" id="output">Here is where we import games and receive information from the API.</h5>
     </div>
 
     <div class="w3-third w3-center">
+      <p class="w3-text-grey">These API calls are headed to SportRadar's NHL API</p>
       <button class="importBtn"  id="importBtn" type="button">Import Season Schedule</button>
       <button class="goalBtn"  id="goalBtn" type="button">Import Latest Game</button>
       <button class="Test1Btn" id="Test1Btn" type="button">Test1</button>
@@ -28,10 +29,12 @@
     </div>
 
     <div class="w3-twothird">
-      <h1>What goes into our "calcualtion?", well really it's...</h1>
-      <h5 class="w3-padding-32">Words words words</h5>
+      <h1>What are we importing?</h1>
+      <h5 class="w3-padding-32">Season Schedule & Game Boxscore</h5>
 
-      <p class="w3-text-grey">Another area for us to put information into if we need to.</p>
+      <p class="w3-text-grey">One button currently only imports the 2022 season schedule for the Capitals. We hope to add functionality so we can grab all games from all seasons that Ovechkin has been in the league for. Once we have all that information in, we will remove the season import button.
+        Once that button is gone, we will just have our Game Import button, which currently pings our database, returning a gameID, we then use that to call the API to bring back the game boxscore. Once we have that, it pulls all the goal information to check and see if Ov scored, either way, it updates the record in our database, as long as the game is complete.
+      </p>
     </div>
   </div>
 </div>
