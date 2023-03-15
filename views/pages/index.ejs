@@ -47,7 +47,7 @@
       const response = await fetch('/goal-finder')
       const data = await response.json()
       console.log(data)
-      output.textContent = `Ovechkin's career goals are ${data}, the current record is 894.`
+      output.textContent = `${data}`
     } catch (error) {
       console.error(error)
       output.textContent = 'There has been an error in searching for goal totals.'

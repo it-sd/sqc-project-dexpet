@@ -90,10 +90,10 @@ app.get('/health', async function (req, res) {
 })
 app.get('/goal-finder', async function (req, res) {
   const client = await pool.connect()
-  const query = 'Select sum(ovGoals) FROM games;'
+  const query = 'Select sum(ovgoals) FROM games;'
   const queryResults = await client.query(query)
   if (queryResults && queryResults.rows) {
-    const currentGoals = queryResults.rows[0].count
+    const currentGoals = queryResults.rows[0].sum
     res.json(currentGoals)
   }
 })
