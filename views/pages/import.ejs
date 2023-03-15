@@ -8,7 +8,7 @@
   <div class="w3-content">
     <div class="w3-twothird">
       <h1>Game Import</h1>
-      <h5 class="w3-padding-32">Here is where we import games and receive information from the API.</h5>
+      <h5 class="w3-padding-32" id="output">Here is where we import games and receive information from the API.</h5>
     </div>
 
     <div class="w3-third w3-center">
@@ -40,14 +40,29 @@
 
 
 <script>
+  const output = document.querySelector('#output')
   const button = document.querySelector('#importBtn')
   button.addEventListener('click', async () => {
     try {
       const response = await fetch('/get-schedule')
       const data = await response.json()
       console.log(data)
+      output.textContent = 'The 2022 Season has been imported!'
     } catch (error) {
       console.error(error)
+      output.textContent = 'There has been an error in importing.'
+    }
+  })
+  const button1 = document.querySelector('#goalBtn')
+  button1.addEventListener('click', async () => {
+    try {
+      const response = await fetch('/get-goals')
+      const data = await response.json()
+      console.log(data)
+      output.textContent = 'The latest game has been imported.'
+    } catch (error) {
+      console.error(error)
+      output.textContent = 'There has been an error in importing.'
     }
   })
 </script>

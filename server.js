@@ -38,7 +38,7 @@ const queryAllGames = async function () {
 }
 
 const queryAllGoals = async function () {
-  const sql = 'Select count(ovGoals) FROM games;'
+  const sql = 'Select sum(ovGoals) FROM games;'
 
   const results = await query(sql)
   return { games: results }
@@ -81,36 +81,69 @@ app.get('/import', function (req, res) {
   res.render('pages/import')
 })
 app.get('/health', async function (req, res) {
-  const games = await queryAllGames
+  const games = await queryAllGames()
   if (games != null) {
     res.status(200).send('healthy')
   } else {
     res.status(500).send('Database connection has failed')
   }
 })
-
-app.post('/insertGame', (req, res) => {
-  // get information from req body
-  const date = req.body.date
-  const opponent = req.body.opponent
-  const opponentGoals = req.body.opponentGoals
-  const home = req.body.home
-  const capsGoals = req.body.capsGoals
-  const ovGoals = req.body.ovGoals
-
-  // Insert into database
-  const insertQuery = `INSERT INTO games (result, date, opponent, opponentGoals, home, capsGoals, ovGoals) VALUES ('${capsGoals > opponentGoals ? 'W' : 'L'}, ${date}, '${opponent}', ${opponentGoals}, '${home}', ${capsGoals}, ${ovGoals})`
-  pool.query(insertQuery)
-  if (err) {
-    console.error(err.message)
-    res.status(500).send('Error upon inserting game into database.')
-  } else {
-    console.log(`Game added to the database with ID ${this.lastID}`)
-    res.send(`Game added to the database with ID ${this.lastID}`)
+app.get('/goal-finder', async function (req, res) {
+  const client = await pool.connect()
+  const query = 'Select sum(ovGoals) FROM games;'
+  const queryResults = await client.query(query)
+  if (queryResults && queryResults.rows) {
+    const currentGoals = queryResults.rows[0].count
+    res.json(currentGoals)
   }
 })
 
-app.get('/update-db')
+app.get('/get-goals', async (req, res) => {
+  try {
+    const client = await pool.connect()
+    const query = 'Select referenceID from games where result=\'U\' AND date <= current_date ORDER BY date;'
+    let gameID
+    const queryResults = await client.query(query)
+    if (queryResults && queryResults.rows) {
+      gameID = queryResults.rows[0].referenceid
+    }
+    const response = await fetch(`http://api.sportradar.us/nhl/trial/v7/en/games/${gameID}/boxscore.json?api_key=${TOKEN}`)
+    const gameData = await response.json()
+    if (gameData.status !== 'closed') {
+      return res.status(500).send('There is a game scheduled, but it has not finished.')
+    }
+    let ovGoals = 0
+    const capsGoals = gameData.home.name.includes('Capitals') ? gameData.home.points : gameData.away.points
+    gameData.home.leaders.goals.forEach(goal => {
+      if (goal.full_name.includes('Alex Ovechkin')) {
+        ovGoals = goal.statistics.total.goals
+      }
+    })
+    gameData.away.leaders.goals.forEach(goal => {
+      if (goal.full_name.includes('Alex Ovechkin')) {
+        ovGoals = goal.statistics.total.goals
+      }
+    })
+    const opponentGoals = gameData.home.name.includes('Capitals') ? gameData.away.points : gameData.home.points
+    const gameResult = (capsGoals > opponentGoals) ? 'Y' : 'N'
+    const updateQuery = `Update games SET capsgoals = ${capsGoals}, result=\'${gameResult}\', opponentgoals=${opponentGoals}, ovgoals=${ovGoals} WHERE referenceID=\'${gameID}\';`
+
+    const returnData = {
+      capsgoals: capsGoals,
+      ovgoals: ovGoals,
+      opponentgoals: opponentGoals,
+      result: gameResult
+    }
+
+    client.query(updateQuery)
+    client.release()
+
+    res.json(returnData)
+  } catch (error) {
+    console.error(error)
+    res.status(500).send('An error occurred while looking for the most recent goal.')
+  }
+})
 
 app.get('/get-schedule', async (req, res) => {
   try {
@@ -121,7 +154,7 @@ app.get('/get-schedule', async (req, res) => {
     const games = data.games.filter(game => {
       return game.home.name === 'Washington Capitals' || game.away.name === 'Washington Capitals'
     }).map(game => {
-      const gameID = game.reference
+      const gameID = game.id
       let result = 'U'
       let capsGoals = 0
       let oppGoals = 0
@@ -131,11 +164,11 @@ app.get('/get-schedule', async (req, res) => {
       if (game.away_points && game.away.alias.includes('WSH')) {
         capsGoals = game.away_points
         oppGoals = game.home_points
-        result = (capsGoals > oppGoals) ? 'Y' : 'N'
+        result = (capsGoals > oppGoals) ? 'W' : 'L'
       } else if (game.home_points && game.home.alias.includes('WSH')) {
         capsGoals = game.home_points
         oppGoals = game.away_points
-        result = (capsGoals > oppGoals) ? 'Y' : 'N'
+        result = (capsGoals > oppGoals) ? 'W' : 'L'
       }
       return {
         gameID: gameID,
@@ -151,14 +184,15 @@ app.get('/get-schedule', async (req, res) => {
 
     // Insert the game information into the database
     const client = await pool.connect()
-    const query = 'INSERT INTO games (seasonID, referenceID result, date, opponent, opponentGoals, home, capsGoals) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)'
+    const query = 'INSERT INTO games ( referenceID, result, date, opponent, opponentGoals, home, capsGoals) VALUES ($1, $2, $3, $4, $5, $6, $7)'
     games.forEach(game => {
-      client.query(query, [game.seasonID, game.gameID, game.result, game.date, game.opponent, game.opponentGoals, game.capsGoals, game.home])
+      client.query(query, [game.gameID, game.result, game.date, game.opponent, game.opponentGoals, game.home, game.capsGoals])
     })
     client.release()
 
     res.json(games)
-  } catch (error) {
+  }
+  catch (error) {
     console.error(error)
     res.status(500).send('An error occurred while fetching the schedule.')
   }

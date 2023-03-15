@@ -28,10 +28,10 @@
     </div>
 
     <div class="w3-twothird">
-      <h1>So want to browse the DBs? Feel free to do so here!</h1>
-      <h5 class="w3-padding-32">Words words words</h5>
-
-      <p class="w3-text-grey">Another area for us to put information into if we need to.</p>
+      <h1>Goal Tracker</h1>
+      <h5 class="w3-padding-32">Ovechkin's last goal?</h5>
+      <button class="goalFinderBtn" id="goalFinderBtn" type="button">Goal Finder</button>
+      <p class="w3-text-grey" id="output">Another area for us to put information into if we need to.</p>
     </div>
   </div>
 </div>
@@ -39,5 +39,19 @@
 <div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
     <h1 class="w3-margin w3-xlarge">Quote of the day: Russian Machine Never Break</h1>
 </div>
-
+<script>
+  const output = document.querySelector('#output')
+  const button = document.querySelector('#goalFinderBtn')
+  button.addEventListener('click', async () => {
+    try {
+      const response = await fetch('/goal-finder')
+      const data = await response.json()
+      console.log(data)
+      output.textContent = `Ovechkin's career goals are ${data}, the current record is 894.`
+    } catch (error) {
+      console.error(error)
+      output.textContent = 'There has been an error in searching for goal totals.'
+    }
+  })
+</script>
 </html>
